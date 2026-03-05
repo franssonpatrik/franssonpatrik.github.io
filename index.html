@@ -112,6 +112,74 @@ body{background:var(--bg);color:var(--ink);font-family:'Outfit',sans-serif;font-
   .strengths-grid{grid-template-columns:1fr;}
   .exp-item{grid-template-columns:1fr;gap:6px;}
 }
+
+  /* ── CONTACT FORM ─────────────────────────────────── */
+  .req-btn {
+    padding:5px 14px; font-size:12px; font-family:'Outfit',sans-serif;
+    font-weight:500; letter-spacing:1px; text-transform:uppercase;
+    background:var(--accent2); color:var(--ink); border:none;
+    cursor:pointer; display:flex; align-items:center; gap:6px;
+    margin-left:8px; transition:background 0.2s;
+  }
+  .req-btn:hover { background:#a86a2e; }
+  .req-overlay {
+    position:fixed; inset:0; background:rgba(26,23,20,0.7);
+    backdrop-filter:blur(8px); z-index:1000;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+    opacity:0; pointer-events:none; transition:opacity 0.3s;
+  }
+  .req-overlay.open { opacity:1; pointer-events:all; }
+  .req-box {
+    background:var(--white); width:100%; max-width:480px;
+    padding:44px; position:relative;
+    transform:translateY(20px); transition:transform 0.3s;
+  }
+  .req-overlay.open .req-box { transform:translateY(0); }
+  .req-close {
+    position:absolute; top:18px; right:22px; background:none;
+    border:none; font-size:20px; cursor:pointer; color:var(--muted);
+    line-height:1;
+  }
+  .req-close:hover { color:var(--ink); }
+  .req-title {
+    font-family:'Cormorant Garamond',serif; font-size:28px;
+    font-weight:600; margin-bottom:6px;
+  }
+  .req-sub { font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.6; }
+  .req-label {
+    font-size:10px; letter-spacing:2px; text-transform:uppercase;
+    font-weight:600; color:var(--muted); margin-bottom:6px; display:block;
+  }
+  .req-input {
+    width:100%; padding:10px 13px; border:1px solid var(--border);
+    background:var(--bg); font-family:'Outfit',sans-serif; font-size:13px;
+    color:var(--ink); outline:none; transition:border-color 0.2s; margin-bottom:14px;
+  }
+  .req-input:focus { border-color:var(--accent); }
+  .req-textarea {
+    width:100%; padding:10px 13px; border:1px solid var(--border);
+    background:var(--bg); font-family:'Outfit',sans-serif; font-size:13px;
+    color:var(--ink); outline:none; resize:vertical; min-height:100px;
+    transition:border-color 0.2s; margin-bottom:18px;
+  }
+  .req-textarea:focus { border-color:var(--accent); }
+  .req-submit {
+    width:100%; padding:13px; background:var(--accent); color:var(--white);
+    border:none; font-family:'Outfit',sans-serif; font-size:13px;
+    font-weight:500; cursor:pointer; transition:background 0.2s; letter-spacing:0.5px;
+  }
+  .req-submit:hover:not(:disabled) { background:#1e3d29; }
+  .req-submit:disabled { opacity:0.5; cursor:not-allowed; }
+  .req-success {
+    display:none; text-align:center; padding:32px 0;
+  }
+  .req-success-icon { font-size:48px; margin-bottom:16px; }
+  .req-success-title {
+    font-family:'Cormorant Garamond',serif; font-size:24px;
+    font-weight:600; margin-bottom:8px;
+  }
+  .req-success-text { font-size:13px; color:var(--muted); line-height:1.7; }
+
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E5K1W2FTXP"></script>
 <script>
@@ -132,10 +200,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Outfit',sans-serif;font-
 <div class="lang-bar">
   <button class="lang-btn active" id="btnSwe" onclick="setLang('swe')">SWE</button>
   <button class="lang-btn" id="btnEng" onclick="setLang('eng')">ENG</button>
-  <a id="dlBtn" class="dl-btn" href="Patrik_Fransson_CV_SWE.pdf" download="Patrik_Fransson_CV_SWE.pdf">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    <span id="dlLabel">Ladda ner CV</span>
-  </a>
+  <button class="req-btn" onclick="openReqForm()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    <span id="reqLabel">Begär CV</span>
+  </button>
 </div>
 <div class="hero">
   <div class="hero-top">
@@ -372,10 +440,7 @@ function setLang(l) {
     var val = el.getAttribute('data-' + l);
     if (val !== null) el.innerHTML = val;
   });
-  var dlBtn = document.getElementById('dlBtn');
-  document.getElementById('dlLabel').textContent = l === 'swe' ? 'Ladda ner CV' : 'Download CV';
-  dlBtn.href = l === 'swe' ? 'Patrik_Fransson_CV_SWE.pdf' : 'Patrik_Fransson_CV_EN.pdf';
-  dlBtn.download = l === 'swe' ? 'Patrik_Fransson_CV_SWE.pdf' : 'Patrik_Fransson_CV_EN.pdf';
+  // CV request button label updated via overridden setLang below
 }
 
 // Scroll animations
@@ -401,5 +466,119 @@ var sbObserver = new IntersectionObserver(function(entries) {
 }, { threshold: 0.2 });
 document.querySelectorAll('.sb-section').forEach(function(s) { sbObserver.observe(s); });
 </script>
+
+<!-- CV REQUEST FORM -->
+<div class="req-overlay" id="reqOverlay">
+  <div class="req-box">
+    <button class="req-close" onclick="closeReqForm()">✕</button>
+
+    <div id="reqFormContent">
+      <div class="req-title" data-swe="Begär CV" data-eng="Request CV">Begär CV</div>
+      <div class="req-sub" data-swe="Fyll i dina uppgifter så återkommer Patrik med rätt CV-version inom kort." data-eng="Fill in your details and Patrik will get back to you with the right CV shortly.">Fyll i dina uppgifter så återkommer Patrik med rätt CV-version inom kort.</div>
+
+      <label class="req-label" data-swe="Namn *" data-eng="Name *">Namn *</label>
+      <input class="req-input" id="reqName" type="text" placeholder="Anna Svensson">
+
+      <label class="req-label" data-swe="E-post *" data-eng="Email *">E-post *</label>
+      <input class="req-input" id="reqEmail" type="email" placeholder="anna@foretag.se">
+
+      <label class="req-label" data-swe="Företag" data-eng="Company">Företag</label>
+      <input class="req-input" id="reqCompany" type="text" placeholder="Företag AB">
+
+      <label class="req-label" data-swe="Meddelande" data-eng="Message">Meddelande</label>
+      <textarea class="req-textarea" id="reqMessage" data-swe-placeholder="Berätta kort om rollen eller varför du är intresserad..." data-eng-placeholder="Tell us briefly about the role or why you are interested..." placeholder="Berätta kort om rollen eller varför du är intresserad..."></textarea>
+
+      <button class="req-submit" id="reqSubmit" onclick="submitRequest()">
+        <span data-swe="Skicka förfrågan →" data-eng="Send request →">Skicka förfrågan →</span>
+      </button>
+    </div>
+
+    <div class="req-success" id="reqSuccess">
+      <div class="req-success-icon">✉️</div>
+      <div class="req-success-title" data-swe="Tack för din förfrågan!" data-eng="Thank you for your request!">Tack för din förfrågan!</div>
+      <div class="req-success-text" data-swe="Patrik har fått din förfrågan och återkommer inom kort med rätt CV-version." data-eng="Patrik has received your request and will get back to you shortly with the right CV version.">Patrik har fått din förfrågan och återkommer inom kort med rätt CV-version.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openReqForm() {
+    document.getElementById('reqOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeReqForm() {
+    document.getElementById('reqOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    // Reset form
+    setTimeout(function() {
+      document.getElementById('reqFormContent').style.display = 'block';
+      document.getElementById('reqSuccess').style.display = 'none';
+      document.getElementById('reqName').value = '';
+      document.getElementById('reqEmail').value = '';
+      document.getElementById('reqCompany').value = '';
+      document.getElementById('reqMessage').value = '';
+      document.getElementById('reqSubmit').disabled = false;
+    }, 400);
+  }
+  document.getElementById('reqOverlay').addEventListener('click', function(e) {
+    if (e.target === document.getElementById('reqOverlay')) closeReqForm();
+  });
+
+  async function submitRequest() {
+    var name    = document.getElementById('reqName').value.trim();
+    var email   = document.getElementById('reqEmail').value.trim();
+    var company = document.getElementById('reqCompany').value.trim();
+    var message = document.getElementById('reqMessage').value.trim();
+    var isEng   = (typeof lang !== 'undefined' && lang === 'eng');
+
+    if (!name || !email) {
+      alert(isEng ? 'Please fill in name and email.' : 'Fyll i namn och e-post.');
+      return;
+    }
+
+    document.getElementById('reqSubmit').disabled = true;
+    document.getElementById('reqSubmit').textContent = isEng ? 'Sending...' : 'Skickar...';
+
+    var body = {
+      name:    name,
+      email:   email,
+      company: company || '–',
+      message: message || '–',
+      cv_language: isEng ? 'English' : 'Svenska',
+      _subject: 'CV-förfrågan från ' + name + (company ? ' (' + company + ')' : '')
+    };
+
+    try {
+      var res = await fetch('https://formspree.io/f/xeerjgne', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      var data = await res.json();
+      if (data.ok) {
+        document.getElementById('reqFormContent').style.display = 'none';
+        document.getElementById('reqSuccess').style.display = 'block';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch(e) {
+      alert(isEng ? 'Something went wrong. Please try again.' : 'Något gick fel. Försök igen.');
+      document.getElementById('reqSubmit').disabled = false;
+      document.getElementById('reqSubmit').textContent = isEng ? 'Send request →' : 'Skicka förfrågan →';
+    }
+  }
+
+  // Update req label on lang switch
+  var _origSetLang = setLang;
+  setLang = function(l) {
+    _origSetLang(l);
+    document.getElementById('reqLabel').textContent = l === 'swe' ? 'Begär CV' : 'Request CV';
+    var ta = document.getElementById('reqMessage');
+    if (ta) ta.placeholder = l === 'swe'
+      ? 'Berätta kort om rollen eller varför du är intresserad...'
+      : 'Tell us briefly about the role or why you are interested...';
+  };
+</script>
+
 </body>
 </html>
